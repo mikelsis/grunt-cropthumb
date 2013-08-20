@@ -32,7 +32,6 @@ grunt.initConfig({
     options: {
       width: 200,
       height: 200,
-      cropAmount: 0.5,
       overwrite: false
     },
     files: [{
@@ -62,30 +61,15 @@ Default value: `200`
 
 Height of the resulting thumbnail.
 
-#### options.cropAmount
-Type: `Float`
-Default value: `0.5`
-
-How much to crop versus scale to acheive desired thumbnail size from 0.0 to 1.0. If cropAmount is 0.0, the thumbnail will show the whole image scaled down. If cropAmount is 1.0, the image will be croped to the desired size. A value of 0.5 will result in some scaling and some cropping. 
+### options.quality
+Type: `Integer`
+Default value: `100`
 
 #### options.overwrite
 Type: `boolean`
 Default value: `false`
 
 Set to true to overwrite existing files with the same name as the new cropthumb.
-
-#### options.changeName
-Type: `boolean`
-Default value: `true`
-
-changes `image.jpg` to `image.200.jpg` (referencing width of thumb)
-
-#### options.upscale
-Type: `boolean`
-Default value: `false`
-
-should images be upscaled if smaller than width/height?
-
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
