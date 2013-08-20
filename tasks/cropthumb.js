@@ -17,19 +17,16 @@ var path = require('path');
 
 
 module.exports = function(grunt) {
-
   grunt.registerMultiTask('cropthumb', 'Crops and scales image to create thumbnail.', function() {
-
     var done = this.async();
 
     // Merge task-specific and/or target-specific options with these defaults.
     var options = this.options({
       width: 200,
       height: 200,
-      cropAmount: 0.5,
+      quality: 100,
       overwrite: false,
-      changeName: true,
-      upscale: false
+      changeName: true
     });
 
     // Iterate over all specified file groups.
@@ -59,72 +56,25 @@ module.exports = function(grunt) {
           "Set options 'overwrite' to true to enable overwriting of files.");
       }
 
-
-      //grunt.log.writeln("making cropthumb: " + dest_file);
-      var image = gm(source_file);
-      image
-        .size(function(err, size) {
-        if (err) {
-          grunt.log.error("error reading image size: "+source_file);
-          grunt.log.error(err);
-          callback(err);
-        }
-
-        var source_aspect = size.width/size.height;
-        if (options.width == null) {
-          options.width = options.height * source_aspect;
-        }
-        if (options.height == null) {
-          options.height = options.width / source_aspect;
-        }
-
-        var target_aspect = options.width / options.height;
-
-        if (!options.upscale){
-          if (size.width < options.width) {
-            options.width = size.width;
-            options.height = options.width / target_aspect;
-          }
-          if (size.height < options.height) {
-            options.height = size.height;
-            options.width = options.height * target_aspect;
-          }
-        }
-        
-        var w = size.width;
-        var h = size.height;
-        var left = (w * 0.5 - options.width * 0.5);
-        var top = (h * 0.5 - options.height * 0.5);
-
-        var grow = left - (left * options.cropAmount);
-        left -= grow;
-        top -= grow/target_aspect;
-
-        var right = w - left;
-        var bottom = h - top;
-        var width = right - left;
-        var height = bottom - top;
-
-
-        
+      var image = gm(source_file);  
         image
-          .crop(width, height, left, top)
-          .resize(options.width, options.height)
-          .quality(95)
+          .quality(options.quality)
+          .gravity('Center')
+          .resize(options.width, options.height, '^')
+          .crop(options.width, options.height)
           .write(dest_file, function(err) {
-          if (err) {
-            grunt.log.error("error creating cropthumb");
-            callback(err);
-          } else {
-            grunt.log.writeln('Cropthumb "' + dest_file + '" created.');
-            callback();
-          }
-        });
-      });
+            if (err) {
+              grunt.log.error("error creating cropthumb");
+              callback(err);
+            } else {
+              grunt.log.writeln('Cropthumb "' + dest_file + '" created.');
+              callback();
+            }
+          });
 
 
     }, function(err) {
       done(!err);
     });
   });
-};
+}
